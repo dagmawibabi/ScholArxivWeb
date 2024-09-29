@@ -9,7 +9,6 @@
 
 	function selectCard(card: any) {
 		selectedCard = card;
-		console.log('clicked');
 	}
 </script>
 

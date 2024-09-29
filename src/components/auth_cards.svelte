@@ -13,15 +13,15 @@
 <div class="pb-2 group" on:click={() => dispatch('click')}>
 	<div
 		class={isSelected
-			? 'flex border-2 border-black rounded-xl cursor-pointer'
-			: 'flex border-2 border-neutral-200 rounded-xl group-hover:border-2 group-hover:border-black cursor-pointer'}
+			? 'flex border-2 border-black rounded-xl cursor-pointer transition-all duration-300 ease-in-out'
+			: 'flex border-2 border-neutral-200 rounded-xl group-hover:border-black cursor-pointer transition-all duration-300 ease-in-out'}
 	>
 		<div class="flex p-1">
 			<!-- ICON -->
 			<div
 				class={isSelected
-					? 'flex items-center px-3 bg-black text-white  rounded-lg '
-					: 'flex items-center px-3 rounded-lg group-hover:border-black group-hover:bg-black group-hover:text-white'}
+					? 'flex items-center px-3 bg-black text-white rounded-lg transition-all duration-300 ease-in-out'
+					: 'flex items-center px-3 rounded-lg group-hover:bg-black group-hover:text-white transition-all duration-300 ease-in-out'}
 			>
 				<svelte:component this={icon} class="w-4" />
 			</div>

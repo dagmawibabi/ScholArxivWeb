@@ -2,6 +2,10 @@
 	import axios from 'axios';
 	import EachPaper from '../../components/each_paper.svelte';
 	import Title from '../../components/title.svelte';
+	import SkeletonPaperWithSummary from '../../components/skeleton_paper_with_summary.svelte';
+	import SkeletonPaper from '../../components/skeleton_paper.svelte';
+	import Footer from '../../components/footer.svelte';
+	import ArxivRemark from '../../components/arxiv_remark.svelte';
 
 	let papers: any[] = [];
 
@@ -13,19 +17,34 @@
 		} catch (error) {
 			console.error('Error fetching recommended papers:', error);
 		}
+		// papers = papers.slice(0, 3);
+		// Select First Paper
+		selectFirstPaper();
+	}
+
+	// Select First Few Papers
+	function selectFirstPaper() {
+		selectPaper(papers[0]);
 	}
 
 	// Select Papers
 	let selectedPapers: any[] = [];
-	function selectPaper(id: string) {
-		if (selectedPapers.includes(id)) {
+	function selectPaper(eachPaper: any) {
+		const extractedId = extractID(eachPaper);
+		if (selectedPapers.includes(extractedId)) {
 			// Unselect
-			selectedPapers = selectedPapers.filter((paperId) => paperId !== id);
+			selectedPapers = [];
 		} else {
 			// Select
-			selectedPapers.push(id);
+			selectedPapers = [extractedId];
 		}
-		console.log(id);
+	}
+
+	// Extract Paper ID
+	function extractID(eachPaper: any) {
+		const paperId = eachPaper['id'];
+		const extractedId = paperId.split('/').pop();
+		return extractedId;
 	}
 
 	fetchRecommendedPapers();
@@ -33,21 +52,40 @@
 
 <div>
 	<div class="relative h-full w-full">
-		<!-- Background -->
-		<!-- <div
-			class="absolute h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"
-		></div> -->
-
-		<div class="w-2/5 m-auto h-screen">
+		<div class="w-2/5 pt-6 m-auto h-screen">
+			<!-- Title -->
 			<Title />
 
 			<!-- List of Papers -->
-			<div class="pt-5">
-				{#each papers as eachPaper}
-					<EachPaper paper={eachPaper} selectPaperFunction={selectPaper} {selectedPapers} />
-				{/each}
+			<div class="">
+				{#if papers.length <= 0}
+					<div class="flex flex-col gap-y-5">
+						<SkeletonPaperWithSummary />
+						<SkeletonPaper />
+						<SkeletonPaper />
+						<SkeletonPaper />
+						<SkeletonPaper />
+					</div>
+				{:else}
+					<div class="flex flex-col gap-y-5">
+						{#each papers as eachPaper}
+							<EachPaper
+								paper={eachPaper}
+								isSelected={selectedPapers[0] === extractID(eachPaper)}
+								on:click={() => selectPaper(eachPaper)}
+							/>
+						{/each}
+					</div>
+				{/if}
 			</div>
-			<div class="h-96"></div>
+			<div class="h-16"></div>
+
+			<div class="text-center text-xs">
+				<span> Showing {papers.length} Papers.</span>
+			</div>
+
+			<!-- Footer -->
+			<Footer />
 		</div>
 	</div>
 </div>
