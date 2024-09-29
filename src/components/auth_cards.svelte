@@ -10,28 +10,28 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="p-2 group" on:click={() => dispatch('click')}>
+<div class="pb-2 group" on:click={() => dispatch('click')}>
 	<div
 		class={isSelected
-			? 'flex border border-black rounded-xl cursor-pointer'
-			: 'flex border border-neutral-400 rounded-xl group-hover:border-black cursor-pointer'}
+			? 'flex border-2 border-black rounded-xl cursor-pointer'
+			: 'flex border-2 border-neutral-200 rounded-xl group-hover:border-2 group-hover:border-black cursor-pointer'}
 	>
-		<div class="flex p-3">
+		<div class="flex p-1">
 			<!-- ICON -->
 			<div
 				class={isSelected
-					? 'border border-black bg-black text-white flex items-center px-4 rounded-lg '
-					: 'border border-neutral-400 flex items-center px-4 rounded-lg group-hover:border-black group-hover:bg-black group-hover:text-white'}
+					? 'flex items-center px-3 bg-black text-white  rounded-lg '
+					: 'flex items-center px-3 rounded-lg group-hover:border-black group-hover:bg-black group-hover:text-white'}
 			>
-				<svelte:component this={icon} class="h-7 w-6 " />
+				<svelte:component this={icon} class="w-4" />
 			</div>
 
 			<!-- LABEL AND SUBTITLE -->
-			<div class="pl-4 flex flex-col">
-				<span class="font-bold text-lg">
+			<div class="pl-2 flex flex-col">
+				<span class="font-semibold text-sm">
 					{label}
 				</span>
-				<span>
+				<span class="text-xs">
 					{subTitle}
 				</span>
 			</div>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import axios from 'axios';
 	import EachPaper from '../../components/each_paper.svelte';
+	import Title from '../../components/title.svelte';
 
 	let papers: any[] = [];
 
@@ -14,6 +15,19 @@
 		}
 	}
 
+	// Select Papers
+	let selectedPapers: any[] = [];
+	function selectPaper(id: string) {
+		if (selectedPapers.includes(id)) {
+			// Unselect
+			selectedPapers = selectedPapers.filter((paperId) => paperId !== id);
+		} else {
+			// Select
+			selectedPapers.push(id);
+		}
+		console.log(id);
+	}
+
 	fetchRecommendedPapers();
 </script>
 
@@ -25,15 +39,12 @@
 		></div> -->
 
 		<div class="w-2/5 m-auto h-screen">
-			<div class="px-2 flex flex-col pt-2 pb-3">
-				<span class="font-bold text-2xl"> ScholArxiv </span>
-				<span class="font-semibold text-lg pb-5">
-					Explore academic papers from the arXiv repository.
-				</span>
-			</div>
-			<div>
+			<Title />
+
+			<!-- List of Papers -->
+			<div class="pt-5">
 				{#each papers as eachPaper}
-					<EachPaper paper={eachPaper} />
+					<EachPaper paper={eachPaper} selectPaperFunction={selectPaper} {selectedPapers} />
 				{/each}
 			</div>
 			<div class="h-96"></div>
