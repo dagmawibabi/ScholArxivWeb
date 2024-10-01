@@ -6,14 +6,21 @@
 	import SkeletonPaper from '../../components/skeleton_paper.svelte';
 	import Footer from '../../components/footer.svelte';
 	import ArxivRemark from '../../components/arxiv_remark.svelte';
+	import Search from '../../components/search.svelte';
+	import { search_term_store } from '../../store/search_store';
+	import { paper_list_store } from '../../store/paper_list_store';
 
 	let papers: any[] = [];
+	let defaultStartIndex = 0;
+	let defaultMaxResults = 100;
+	let searchTerm: string = '';
+	let result_title: string = 'Discover Papers ...';
 
 	// Fetch recommended papers from the API
 	async function fetchRecommendedPapers() {
 		try {
 			const response = await axios.get('http://localhost:5400/arxiv/recommended');
-			papers = response.data;
+			paper_list_store.set(response.data);
 		} catch (error) {
 			console.error('Error fetching recommended papers:', error);
 		}
@@ -47,6 +54,34 @@
 		return extractedId;
 	}
 
+	//
+
+	// Search for Papers
+	async function searchPaper() {
+		if (searchTerm.trim().length > 0) {
+			paper_list_store.set([]);
+			try {
+				const response = await axios.get(
+					`http://localhost:5400/arxiv/search?searchTerm=${searchTerm.trim()}&startIndex=${defaultStartIndex}&maxResults=${defaultMaxResults}`
+				);
+				paper_list_store.set(response.data);
+				result_title = 'Results ...';
+			} catch (error) {
+				console.error('Error fetching searched papers:', error);
+			}
+		}
+		// Select First Paper
+		selectFirstPaper();
+	}
+
+	// State Management
+	search_term_store.subscribe((value) => {
+		searchTerm = value;
+	});
+	paper_list_store.subscribe((value: any[]) => {
+		papers = value;
+	});
+
 	fetchRecommendedPapers();
 </script>
 
@@ -56,8 +91,19 @@
 			<!-- Title -->
 			<Title />
 
-			<!-- List of Papers -->
+			<!-- Search -->
+			<Search searchFunction={searchPaper} />
+
+			<!-- Recommended Papers -->
 			<div class="">
+				<div class="flex justify-between items-center px-4 pb-3">
+					<span class="font-semibold text-lg">
+						{result_title}
+					</span>
+					<div class="rounded-full">
+						<span class="text-xs">{papers.length} {papers.length == 1 ? 'Paper' : 'Papers'} </span>
+					</div>
+				</div>
 				{#if papers.length <= 0}
 					<div class="flex flex-col gap-y-5">
 						<SkeletonPaperWithSummary />
