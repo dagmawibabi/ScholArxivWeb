@@ -86,8 +86,8 @@
 <div class="group" on:click={() => dispatch('click')}>
 	<div
 		class={isSelected == true
-			? 'relative flex flex-col bg-white border border-black text-black rounded-xl drop-shadow-xl py-3 cursor-pointer transition-all duration-300 ease-in-out'
-			: 'relative flex flex-col bg-white border border-zinc-300 group-hover:border-black text-zinc-600 group-hover:text-black rounded-xl drop-shadow-xl py-3 cursor-pointer transition-all duration-300 ease-in-out'}
+			? 'relative flex flex-col bg-white overflow-scroll border border-black text-black rounded-xl drop-shadow-xl py-3 cursor-pointer transition-all duration-300 ease-in-out'
+			: 'relative flex flex-col bg-white overflow-scroll border border-zinc-300 group-hover:border-black text-zinc-600 group-hover:text-black rounded-xl drop-shadow-xl py-3 cursor-pointer transition-all duration-300 ease-in-out'}
 	>
 		<div class="px-4">
 			<!-- Date and ID -->
@@ -138,26 +138,30 @@
 			</div>
 
 			<!-- Interactions -->
-			<div class="pt-1 flex gap-x-2 text-xs">
+			<div
+				class="pt-1 flex gap-x-2 text-xs
+			justify-between md:justify-start lg:justify-start xl:justify-start 2xl:justify-start
+			"
+			>
 				<div
 					class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
 				>
 					<Sparkles size={15} />
-					<span> Ask AI </span>
+					<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Ask AI </span>
 				</div>
 
 				<div
 					class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
 				>
 					<Heart size={15} />
-					<span> Like </span>
+					<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Like </span>
 				</div>
 
 				<div
 					class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
 				>
 					<MessageCircle size={15} />
-					<span> Comment </span>
+					<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Comment </span>
 				</div>
 
 				<div
@@ -165,14 +169,14 @@
 					on:click={() => handleDownload(paper)}
 				>
 					<Download size={15} />
-					<span> Download </span>
+					<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Download </span>
 				</div>
 
 				<div
 					class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
 				>
 					<Bookmark size={15} />
-					<span> Bookmark </span>
+					<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Bookmark </span>
 				</div>
 
 				<!-- <div
@@ -189,7 +193,7 @@
 							class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
 						>
 							<Link2 size={15} />
-							<span> Copy </span>
+							<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Copy </span>
 						</div>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>

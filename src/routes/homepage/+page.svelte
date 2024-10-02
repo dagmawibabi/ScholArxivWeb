@@ -93,7 +93,12 @@
 
 <div>
 	<div class="relative h-full w-full">
-		<div class="w-2/5 pt-6 m-auto h-screen">
+		<div
+			class="pt-6 m-auto h-screen
+		w-full md:w-2/5 lg:w-2/5 xl:w-2/5 2xl:w-2/5
+		px-3 md:px-0 lg:px-0 xl:px-0 2xl:px-0
+		"
+		>
 			<!-- Title -->
 			<Title />
 
