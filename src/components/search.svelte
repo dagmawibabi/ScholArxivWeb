@@ -7,7 +7,7 @@
 
 	let inputTerm: string;
 	let search_filter: string;
-	let search_filter_text: string = 'tile, authors, abstract ...';
+	let search_filter_text: string = 'title, authors, abstract ...';
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Enter') {
@@ -19,7 +19,7 @@
 		search_filter = value;
 
 		if (search_filter == 'All') {
-			search_filter_text = 'tile, authors, abstract ...';
+			search_filter_text = 'title, authors, abstract ...';
 		} else {
 			search_filter_text = search_filter.toLowerCase();
 		}
