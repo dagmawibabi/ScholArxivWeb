@@ -5,9 +5,8 @@
 	import SkeletonPaperWithSummary from '../../components/skeleton_paper_with_summary.svelte';
 	import SkeletonPaper from '../../components/skeleton_paper.svelte';
 	import Footer from '../../components/footer.svelte';
-	import ArxivRemark from '../../components/arxiv_remark.svelte';
 	import Search from '../../components/search.svelte';
-	import { search_term_store } from '../../store/search_store';
+	import { search_term_store, search_filter_store } from '../../store/search_store';
 	import { paper_list_store } from '../../store/paper_list_store';
 
 	let papers: any[] = [];
@@ -15,11 +14,14 @@
 	let defaultMaxResults = 100;
 	let searchTerm: string = '';
 	let result_title: string = 'Discover Papers ...';
+	let search_filter = '';
+
+	let baseURL = 'https://scholarxivapi.onrender.com/arxiv';
 
 	// Fetch recommended papers from the API
 	async function fetchRecommendedPapers() {
 		try {
-			const response = await axios.get('http://localhost:5400/arxiv/recommended');
+			const response = await axios.get(baseURL + '/recommended');
 			paper_list_store.set(response.data);
 		} catch (error) {
 			console.error('Error fetching recommended papers:', error);
@@ -62,7 +64,8 @@
 			paper_list_store.set([]);
 			try {
 				const response = await axios.get(
-					`http://localhost:5400/arxiv/search?searchTerm=${searchTerm.trim()}&startIndex=${defaultStartIndex}&maxResults=${defaultMaxResults}`
+					baseURL +
+						`/search?searchTerm=${searchTerm.trim()}&startIndex=${defaultStartIndex}&maxResults=${defaultMaxResults}`
 				);
 				paper_list_store.set(response.data);
 				result_title = 'Results ...';
@@ -80,6 +83,9 @@
 	});
 	paper_list_store.subscribe((value: any[]) => {
 		papers = value;
+	});
+	search_filter_store.subscribe((value) => {
+		search_filter = value;
 	});
 
 	fetchRecommendedPapers();

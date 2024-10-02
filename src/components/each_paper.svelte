@@ -15,7 +15,6 @@
 		MessageCircle
 	} from 'lucide-svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { Toaster } from '$lib/components/ui/sonner';
 
 	export let paper;
 	export let isSelected;
