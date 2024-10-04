@@ -17,6 +17,7 @@
 	let searchTerm: string = '';
 	let result_title: string = 'Discover Papers ...';
 	let search_filter = '';
+	let loading = true;
 	export let data;
 	papers = data.recommendedPapers;
 	paper_list_store.set(data.recommendedPapers);
@@ -89,6 +90,7 @@
 	});
 
 	onMount(() => {
+		loading = false;
 		selectFirstPaper();
 	});
 </script>
@@ -117,7 +119,8 @@
 						<span class="text-xs">{papers.length} {papers.length == 1 ? 'Paper' : 'Papers'} </span>
 					</div>
 				</div>
-				{#if papers.length <= 0}
+				{#if loading}
+					<!-- Display Skeletons if loading -->
 					<div class="flex flex-col gap-y-5">
 						<SkeletonPaperWithSummary />
 						<SkeletonPaper />
@@ -125,7 +128,11 @@
 						<SkeletonPaper />
 						<SkeletonPaper />
 					</div>
+				{:else if papers.length <= 0}
+					<!-- Empty state, if no papers are found after loading -->
+					<div>No papers found.</div>
 				{:else}
+					<!-- Once loading is false, display actual papers -->
 					<div class="flex flex-col gap-y-5">
 						{#each papers as eachPaper}
 							<EachPaper
