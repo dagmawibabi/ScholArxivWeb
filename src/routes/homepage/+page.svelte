@@ -19,8 +19,12 @@
 	let search_filter = '';
 	let loading = true;
 	export let data;
-	papers = data.recommendedPapers;
-	paper_list_store.set(data.recommendedPapers);
+	onMount(() => {
+		loading = false;
+		papers = data.recommendedPapers;
+		paper_list_store.set(data.recommendedPapers);
+		selectFirstPaper();
+	});
 
 	// // Fetch recommended papers from the API
 	// async function fetchRecommendedPapers() {
@@ -62,7 +66,10 @@
 	// Search for Papers
 	async function searchPaper() {
 		if (searchTerm.trim().length > 0) {
+			loading = true;
 			paper_list_store.set([]);
+			result_title = 'Searching ...';
+
 			try {
 				const response = await axios.get(
 					baseURL +
@@ -74,6 +81,7 @@
 				console.error('Error fetching searched papers:', error);
 			}
 		}
+		loading = false;
 		// Select First Paper
 		selectFirstPaper();
 	}
@@ -87,11 +95,6 @@
 	});
 	search_filter_store.subscribe((value) => {
 		search_filter = value;
-	});
-
-	onMount(() => {
-		loading = false;
-		selectFirstPaper();
 	});
 </script>
 
@@ -128,7 +131,7 @@
 						<SkeletonPaper />
 						<SkeletonPaper />
 					</div>
-				{:else if papers.length <= 0}
+				{:else if papers.length <= 0 && loading == false}
 					<!-- Empty state, if no papers are found after loading -->
 					<div>No papers found.</div>
 				{:else}
