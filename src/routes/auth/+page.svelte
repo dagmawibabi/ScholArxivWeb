@@ -38,7 +38,13 @@
 				on:click={() => selectCard('guest')}
 			/>
 		</div>
-		<a href="/homepage">
+		<a
+			href={selectedCard === 'login'
+				? '/auth/sign-in'
+				: selectedCard === 'signup'
+					? '/auth/sign-up'
+					: '/auth/guest'}
+		>
 			<LongButton label="Continue" />
 		</a>
 	</div>

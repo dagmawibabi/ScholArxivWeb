@@ -9,6 +9,8 @@
 	import { search_term_store, search_filter_store } from '../../store/search_store';
 	import { paper_list_store } from '../../store/paper_list_store';
 	import { onMount } from 'svelte';
+	import { useSession } from '$lib/auth-client';
+	import * as Avatar from '$lib/components/ui/avatar/index';
 
 	let baseURL = 'https://scholarxivapi.onrender.com/arxiv';
 	let papers: any[] = [];
@@ -96,6 +98,8 @@
 	search_filter_store.subscribe((value) => {
 		search_filter = value;
 	});
+
+	const session = useSession();
 </script>
 
 <div>
@@ -108,6 +112,27 @@
 		>
 			<!-- Title -->
 			<Title />
+
+			<div class="mt-2">
+				{#if $session.data}
+					<div class="flex items-center gap-2">
+						<Avatar.Root>
+							<Avatar.Image src={$session.data?.user.image} />
+							<Avatar.Fallback>
+								{$session.data?.user.name[0]}
+							</Avatar.Fallback>
+						</Avatar.Root>
+						<div class="">
+							<h3 class="text-sm">
+								{$session.data?.user.name}
+							</h3>
+							<p class="text-xs text-muted-foreground">
+								{$session.data?.user.email}
+							</p>
+						</div>
+					</div>
+				{/if}
+			</div>
 
 			<!-- Search -->
 			<Search searchFunction={searchPaper} />
