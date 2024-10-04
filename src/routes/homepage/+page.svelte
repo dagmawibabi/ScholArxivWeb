@@ -8,28 +8,30 @@
 	import Search from '../../components/search.svelte';
 	import { search_term_store, search_filter_store } from '../../store/search_store';
 	import { paper_list_store } from '../../store/paper_list_store';
+	import { onMount } from 'svelte';
 
+	let baseURL = 'https://scholarxivapi.onrender.com/arxiv';
 	let papers: any[] = [];
 	let defaultStartIndex = 0;
 	let defaultMaxResults = 100;
 	let searchTerm: string = '';
 	let result_title: string = 'Discover Papers ...';
 	let search_filter = '';
+	export let data;
+	papers = data.recommendedPapers;
+	paper_list_store.set(data.recommendedPapers);
 
-	let baseURL = 'https://scholarxivapi.onrender.com/arxiv';
-
-	// Fetch recommended papers from the API
-	async function fetchRecommendedPapers() {
-		try {
-			const response = await axios.get(baseURL + '/recommended');
-			paper_list_store.set(response.data);
-		} catch (error) {
-			console.error('Error fetching recommended papers:', error);
-		}
-		// papers = papers.slice(0, 3);
-		// Select First Paper
-		selectFirstPaper();
-	}
+	// // Fetch recommended papers from the API
+	// async function fetchRecommendedPapers() {
+	// 	try {
+	// 		const response = await axios.get(baseURL + '/recommended');
+	// 		paper_list_store.set(response.data);
+	// 	} catch (error) {
+	// 		console.error('Error fetching recommended papers:', error);
+	// 	}
+	// 	// Select First Paper
+	// 	selectFirstPaper();
+	// }
 
 	// Select First Few Papers
 	function selectFirstPaper() {
@@ -55,8 +57,6 @@
 		const extractedId = paperId.split('/').pop();
 		return extractedId;
 	}
-
-	//
 
 	// Search for Papers
 	async function searchPaper() {
@@ -88,7 +88,9 @@
 		search_filter = value;
 	});
 
-	fetchRecommendedPapers();
+	onMount(() => {
+		selectFirstPaper();
+	});
 </script>
 
 <div>
