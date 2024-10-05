@@ -1,8 +1,8 @@
 import { createAuthClient } from 'better-auth/svelte';
-import { baseURL } from '$lib/constants.js';
+import { authBaseURL } from '$lib/constants.js';
 
 export const authClient = createAuthClient({
-	baseURL: baseURL
+	baseURL: authBaseURL
 });
 
 export const { signIn, signUp, signOut, useSession } = authClient;
