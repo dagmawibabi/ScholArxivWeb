@@ -36,7 +36,7 @@
 
 <div class="w-full absolute bottom-0 z-50 pt-2">
 	<div
-		class="group w-2/5 mx-auto backdrop-blur-sm hover:bg-white/50 hover:backdrop-blur-xl border-t border-dashed pt-3 border-transparent hover:border-zinc-400 rounded-tl-2xl rounded-tr-2xl"
+		class="group w-full md:w-2/5 lg:w-2/5 xl:w-2/5 2xl:w-2/5 mx-auto backdrop-blur-sm hover:bg-white/50 hover:backdrop-blur-xl border-t border-dashed pt-3 border-transparent hover:border-zinc-400 rounded-tl-2xl rounded-tr-2xl"
 	>
 		<div
 			class="h-2 group-hover:h-[550px] opacity-0 group-hover:opacity-100 overflow-scroll duration-300"
