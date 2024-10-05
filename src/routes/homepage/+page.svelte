@@ -245,6 +245,6 @@
 	</div>
 
 	<!-- Search -->
-	<Search searchFunction={chatWithAI} />
+	<Search searchFunction={searchPaper} {chatWithAI} />
 	<!-- <Search searchFunction={searchPaper} /> -->
 </div>

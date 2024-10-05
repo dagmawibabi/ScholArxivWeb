@@ -7,6 +7,7 @@
 	import SvelteMarkdown from 'svelte-markdown';
 
 	export let searchFunction: Function;
+	export let chatWithAI: Function;
 
 	let inputTerm: string;
 	let search_filter: string;
@@ -14,7 +15,7 @@
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Enter') {
-			searchFunction();
+			chatWithAI();
 		}
 	}
 
