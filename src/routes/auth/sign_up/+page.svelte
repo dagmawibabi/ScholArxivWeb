@@ -3,38 +3,18 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { signIn, signUp } from '$lib/auth-client';
 	import { writable } from 'svelte/store';
+	import { handleSignUp } from '$lib/auth_functions';
+	import BetterAuthRemark from '../../../components/better_auth_remark.svelte';
 
 	// Create writable stores for form fields
 	const firstName = writable('');
 	const lastName = writable('');
 	const email = writable('');
 	const password = writable('');
-
-	// Function to handle form submission
-	const handleSignUp = async () => {
-		const user = {
-			firstName: $firstName,
-			lastName: $lastName,
-			email: $email,
-			password: $password
-		};
-		await signUp.email({
-			email: user.email,
-			password: user.password,
-			name: `${user.firstName} ${user.lastName}`,
-			callbackURL: '/',
-			fetchOptions: {
-				onError(context) {
-					alert(context.error.message);
-				}
-			}
-		});
-	};
 </script>
 
-<div class="min-h-screen flex items-center justify-center">
+<div class="h-screen flex flex-col justify-center">
 	<Card.Root class="mx-auto max-w-sm">
 		<Card.Header>
 			<Card.Title class="text-xl">Sign Up</Card.Title>
@@ -54,14 +34,28 @@
 				</div>
 				<div class="grid gap-2">
 					<Label for="email">Email</Label>
-					<Input id="email" type="email" placeholder="m@example.com" required bind:value={$email} />
+					<Input
+						id="email"
+						type="email"
+						placeholder="max@example.com"
+						required
+						bind:value={$email}
+					/>
 				</div>
 				<div class="grid gap-2">
 					<Label for="password">Password</Label>
 					<Input id="password" type="password" bind:value={$password} />
 				</div>
-				<Button type="button" class="w-full" on:click={handleSignUp}>Create an account</Button>
-				<div class="gap-2 flex flex-col">
+				<Button
+					type="button"
+					class="w-full"
+					on:click={() =>
+						handleSignUp($firstName.trim(), $lastName.trim(), $email.trim(), $password.trim())}
+					>Create an account</Button
+				>
+
+				<!-- Social Signup -->
+				<!-- <div class="gap-2 flex flex-col">
 					<Button
 						variant="outline"
 						class="w-full"
@@ -77,17 +71,18 @@
 						class="w-full"
 						on:click={async () => {
 							await signIn.social({
-								provider: 'google',
+								provider: 'github',
 								callbackURL: '/homepage'
 							});
 						}}>Continue with Github</Button
 					>
-				</div>
+				</div> -->
 			</div>
 			<div class="mt-4 text-center text-sm">
 				Already have an account?
-				<a href="/sign-in" class="underline"> Sign in </a>
+				<a href="/auth/sign_in" class="underline"> Sign in </a>
 			</div>
 		</Card.Content>
 	</Card.Root>
+	<BetterAuthRemark />
 </div>

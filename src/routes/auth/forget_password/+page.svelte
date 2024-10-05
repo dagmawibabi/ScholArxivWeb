@@ -1,15 +1,17 @@
 <script lang="ts">
-	import { authClient } from '$lib/auth-client';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { writable } from 'svelte/store';
+	import BetterAuthRemark from '../../../components/better_auth_remark.svelte';
+	import { handleForgetPassword } from '$lib/auth_functions';
 
+	// Create writable stores for form fields
 	const email = writable('');
 </script>
 
-<div class="min-h-screen flex items-center justify-center">
+<div class="h-screen flex flex-col justify-center">
 	<Card.Root class="mx-auto max-w-sm">
 		<Card.Header>
 			<Card.Title class="text-2xl">Reset Password</Card.Title>
@@ -19,7 +21,13 @@
 			<div class="grid gap-4">
 				<div class="grid gap-2">
 					<Label for="email">Email</Label>
-					<Input id="email" type="email" placeholder="m@example.com" required bind:value={$email} />
+					<Input
+						id="email"
+						type="email"
+						placeholder="max@example.com"
+						required
+						bind:value={$email}
+					/>
 				</div>
 				<Button
 					type="button"
@@ -29,29 +37,16 @@
 							alert('Please enter your email address');
 							return;
 						}
-						await authClient.forgetPassword(
-							{
-								email: $email,
-								redirectTo: 'http://localhost:5173/auth/reset-password'
-							},
-							{
-								onSuccess() {
-									alert('Password reset link sent to your email');
-									window.location.href = '/';
-								},
-								onError(context) {
-									alert(context.error.message);
-								}
-							}
-						);
+						await handleForgetPassword($email.trim());
 					}}
 				>
 					Reset Password
 				</Button>
 			</div>
 			<div class="mt-4 text-center text-sm">
-				<a href="/sign-in" class="underline"> Back to Sign In </a>
+				<a href="/auth/sign_in" class="underline"> Back to Sign In </a>
 			</div>
 		</Card.Content>
 	</Card.Root>
+	<BetterAuthRemark />
 </div>

@@ -1,31 +1,18 @@
 <script lang="ts">
-	import { signIn } from '$lib/auth-client';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { writable } from 'svelte/store';
+	import { handleSignIn } from '$lib/auth_functions';
+	import BetterAuthRemark from '../../../components/better_auth_remark.svelte';
 
+	// Create writable stores for form fields
 	const email = writable('');
 	const password = writable('');
-
-	const handleSignIn = async () => {
-		await signIn.email(
-			{
-				email: $email,
-				password: $password,
-				callbackURL: '/homepage'
-			},
-			{
-				onError(context) {
-					alert(context.error.message);
-				}
-			}
-		);
-	};
 </script>
 
-<div class="min-h-screen flex items-center justify-center">
+<div class="h-screen flex flex-col justify-center">
 	<Card.Root class="mx-auto max-w-sm">
 		<Card.Header>
 			<Card.Title class="text-2xl">Login</Card.Title>
@@ -35,20 +22,31 @@
 			<div class="grid gap-4">
 				<div class="grid gap-2">
 					<Label for="email">Email</Label>
-					<Input id="email" type="email" placeholder="m@example.com" required bind:value={$email} />
+					<Input
+						id="email"
+						type="email"
+						placeholder="max@example.com"
+						required
+						bind:value={$email}
+					/>
 				</div>
 				<div class="grid gap-2">
 					<div class="flex items-center">
 						<Label for="password">Password</Label>
-						<a href="/auth/forget-password" class="ml-auto inline-block text-sm underline">
+						<a href="/auth/forget_password" class="ml-auto inline-block text-sm hover:underline">
 							Forgot your password?
 						</a>
 					</div>
 					<Input id="password" type="password" required bind:value={$password} />
 				</div>
-				<Button type="button" class="w-full" on:click={handleSignIn}>Login</Button>
+				<Button
+					type="button"
+					class="w-full"
+					on:click={() => handleSignIn($email.trim(), $password.trim())}>Login</Button
+				>
 
-				<div class="gap-2 flex flex-col">
+				<!-- Social Sign In -->
+				<!-- <div class="gap-2 flex flex-col">
 					<Button
 						variant="outline"
 						class="w-full"
@@ -69,12 +67,13 @@
 							});
 						}}>Continue with Github</Button
 					>
-				</div>
+				</div> -->
 			</div>
 			<div class="mt-4 text-center text-sm">
 				Don&apos;t have an account?
-				<a href="/auth/sign-up" class="underline">Sign up</a>
+				<a href="/auth/sign_up" class="underline">Sign up</a>
 			</div>
 		</Card.Content>
 	</Card.Root>
+	<BetterAuthRemark />
 </div>

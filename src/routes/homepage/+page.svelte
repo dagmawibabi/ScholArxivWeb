@@ -9,10 +9,12 @@
 	import { search_term_store, search_filter_store } from '../../store/search_store';
 	import { paper_list_store } from '../../store/paper_list_store';
 	import { onMount } from 'svelte';
-	import { useSession } from '$lib/auth-client';
-	import * as Avatar from '$lib/components/ui/avatar/index';
+	import { useSession, signOut, authClient } from '$lib/auth_client';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import ProfileAvatar from '../../components/profile_avatar.svelte';
+	import { baseURL } from '$lib/constants.js';
+	import { handleLogout } from '$lib/auth_functions';
 
-	let baseURL = 'https://scholarxivapi.onrender.com/arxiv';
 	let papers: any[] = [];
 	let defaultStartIndex = 0;
 	let defaultMaxResults = 100;
@@ -27,18 +29,6 @@
 		paper_list_store.set(data.recommendedPapers);
 		selectFirstPaper();
 	});
-
-	// // Fetch recommended papers from the API
-	// async function fetchRecommendedPapers() {
-	// 	try {
-	// 		const response = await axios.get(baseURL + '/recommended');
-	// 		paper_list_store.set(response.data);
-	// 	} catch (error) {
-	// 		console.error('Error fetching recommended papers:', error);
-	// 	}
-	// 	// Select First Paper
-	// 	selectFirstPaper();
-	// }
 
 	// Select First Few Papers
 	function selectFirstPaper() {
@@ -110,28 +100,38 @@
 		px-3 md:px-0 lg:px-0 xl:px-0 2xl:px-0
 		"
 		>
-			<!-- Title -->
-			<Title />
+			<div class="flex justify-between">
+				<!-- Title -->
+				<Title />
 
-			<div class="mt-2">
-				{#if $session.data}
-					<div class="flex items-center gap-2">
-						<Avatar.Root>
-							<Avatar.Image src={$session.data?.user.image} />
-							<Avatar.Fallback>
-								{$session.data?.user.name[0]}
-							</Avatar.Fallback>
-						</Avatar.Root>
-						<div class="">
-							<h3 class="text-sm">
-								{$session.data?.user.name}
-							</h3>
-							<p class="text-xs text-muted-foreground">
-								{$session.data?.user.email}
-							</p>
-						</div>
-					</div>
-				{/if}
+				<div class="mt-2">
+					{#if $session.data}
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger>
+								<ProfileAvatar session={$session} />
+							</DropdownMenu.Trigger>
+							<DropdownMenu.Content>
+								<DropdownMenu.Group>
+									<!-- Profile -->
+									<DropdownMenu.Item
+										><ProfileAvatar session={$session} fullInfo={true} /></DropdownMenu.Item
+									>
+									<!-- Logout -->
+									<!-- svelte-ignore a11y-click-events-have-key-events -->
+									<!-- svelte-ignore a11y-no-static-element-interactions -->
+									<DropdownMenu.Item
+										><div
+											class="w-full text-center"
+											on:click={() => handleLogout($session.data?.session.id)}
+										>
+											Logout
+										</div></DropdownMenu.Item
+									>
+								</DropdownMenu.Group>
+							</DropdownMenu.Content>
+						</DropdownMenu.Root>
+					{/if}
+				</div>
 			</div>
 
 			<!-- Search -->

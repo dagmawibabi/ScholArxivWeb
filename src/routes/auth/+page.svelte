@@ -40,10 +40,10 @@
 		</div>
 		<a
 			href={selectedCard === 'login'
-				? '/auth/sign-in'
+				? '/auth/sign_in'
 				: selectedCard === 'signup'
-					? '/auth/sign-up'
-					: '/auth/guest'}
+					? '/auth/sign_up'
+					: '/homepage'}
 		>
 			<LongButton label="Continue" />
 		</a>

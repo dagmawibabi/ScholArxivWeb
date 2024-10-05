@@ -1,17 +1,19 @@
 <script>
-	import { signIn, authClient } from '$lib/auth-client';
-	import { Button } from '$lib/components/ui/button/index';
 	import * as Card from '$lib/components/ui/card/index';
+	import { Button } from '$lib/components/ui/button/index';
 	import { Input } from '$lib/components/ui/input/index';
 	import { Label } from '$lib/components/ui/label/index';
 	import { writable } from 'svelte/store';
+	import { handleResetPassword } from '$lib/auth_functions';
+	import BetterAuthRemark from '../../../components/better_auth_remark.svelte';
 
+	// Create writable stores for form fields
 	const confirmPassword = writable('');
 	const password = writable('');
 </script>
 
-<div class="min-h-screen flex items-center justify-center">
-	<Card.Root class="mx-auto ">
+<div class="h-screen w-1/4 flex flex-col justify-center mx-auto">
+	<Card.Root>
 		<Card.Header>
 			<Card.Title class="text-2xl">Reset Password</Card.Title>
 			<Card.Description>Enter your new password below</Card.Description>
@@ -41,21 +43,13 @@
 				<Button
 					type="button"
 					class="w-full"
-					on:click={async () => {
-						await authClient.resetPassword({
-							newPassword: $password,
-							fetchOptions: {
-								onSuccess(context) {
-									window.location.href = '/auth/sign-in';
-								},
-								onError(context) {
-									alert(context.error.message);
-								}
-							}
-						});
+					on:click={() => {
+						handleResetPassword($password.trim());
 					}}>Reset</Button
 				>
+				<a href="/" class="text-sm text-center">Cancel</a>
 			</div>
 		</Card.Content>
 	</Card.Root>
+	<BetterAuthRemark />
 </div>
