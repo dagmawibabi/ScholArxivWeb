@@ -43,8 +43,8 @@
 					Reset Password
 				</Button>
 			</div>
-			<div class="mt-4 text-center text-sm">
-				<a href="/auth/sign_in" class="underline"> Back to Sign In </a>
+			<div class="pt-3 text-center text-sm">
+				<a href="/auth/sign_in" class="hover:underline underline-offset-4"> Back to Sign In </a>
 			</div>
 		</Card.Content>
 	</Card.Root>
