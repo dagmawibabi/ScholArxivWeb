@@ -5,8 +5,8 @@
 </script>
 
 <div>
-	<div class="flex items-center gap-x-2">
-		<Avatar.Root class="border border-zinc-300">
+	<div class="flex items-center gap-x-2 cursor-pointer">
+		<Avatar.Root class="border border-zinc-300 drop-shadow-md hover:shadow-lg">
 			<Avatar.Image src={session.data?.user.image} />
 			<Avatar.Fallback>
 				{session.data?.user.name[0]}

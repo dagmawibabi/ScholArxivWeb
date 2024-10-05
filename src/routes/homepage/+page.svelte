@@ -12,9 +12,13 @@
 	import { useSession, signOut, authClient } from '$lib/auth_client';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import ProfileAvatar from '../../components/profile_avatar.svelte';
-	import { baseURL } from '$lib/constants.js';
+	import { baseURL, aiBaseURL } from '$lib/constants.js';
 	import { handleLogout } from '$lib/auth_functions';
+	import { Separator } from '$lib/components/ui/separator';
+	import { writable } from 'svelte/store';
+	import { chat_history_store } from '../../store/chat_history_store';
 
+	let chat_history: any[] = [];
 	let papers: any[] = [];
 	let defaultStartIndex = 0;
 	let defaultMaxResults = 100;
@@ -37,14 +41,34 @@
 
 	// Select Papers
 	let selectedPapers: any[] = [];
+	let selectedPapersObj: any[] = [];
+	let selectedPapersForAI = writable('');
 	function selectPaper(eachPaper: any) {
 		const extractedId = extractID(eachPaper);
 		if (selectedPapers.includes(extractedId)) {
 			// Unselect
-			selectedPapers = [];
+			selectedPapers = selectedPapers.filter((id) => id !== extractedId); // Remove the ID
+			selectedPapersObj = selectedPapersObj.filter((paper) => paper.id !== paper.extractedId);
+			// selectedPapersForAI.update((papers) => papers.filter((paper:any) => paper.id !== eachPaper.id));
+			// selectedPapersForAI.set(); // Remove the paper object
 		} else {
 			// Select
-			selectedPapers = [extractedId];
+			selectedPapers = [...selectedPapers, extractedId]; // Add the ID
+			selectedPapersObj = [...selectedPapersObj, eachPaper];
+			// selectedPapersForAI.update((papers) => [...papers, eachPaper]); // Add the paper object
+		}
+		let context = '';
+		for (var paperx of selectedPapersObj) {
+			context += JSON.stringify(paperx, null, 2);
+		}
+		selectedPapersForAI.set(context);
+	}
+
+	function selectAllPapers() {
+		selectedPapers = [];
+		selectedPapersObj = [];
+		for (var eachPaper of papers) {
+			selectPaper(eachPaper);
 		}
 	}
 
@@ -88,11 +112,39 @@
 	search_filter_store.subscribe((value) => {
 		search_filter = value;
 	});
+	chat_history_store.subscribe((value) => {
+		chat_history = value;
+	});
+
+	// Chat with AI
+	async function chatWithAI() {
+		let newUserChat = {
+			from: 'user',
+			content: searchTerm
+		};
+		let newLoading = {
+			from: 'system',
+			content: 'loading'
+		};
+		chat_history_store.update((currentHistory) => [...currentHistory, newUserChat, newLoading]);
+
+		let response = await axios.post(aiBaseURL + '/ask', {
+			prompt: searchTerm + $selectedPapersForAI
+		});
+		let newAIChat = {
+			from: 'ai',
+			content: response.data
+		};
+		chat_history_store.update((currentHistory) => {
+			currentHistory.pop(); // Remove the last element
+			return [...currentHistory, newAIChat]; // Add newAIChat
+		});
+	}
 
 	const session = useSession();
 </script>
 
-<div>
+<div class="h-screen overflow-scroll">
 	<div class="relative h-full w-full">
 		<div
 			class="pt-6 m-auto h-screen
@@ -100,11 +152,13 @@
 		px-3 md:px-0 lg:px-0 xl:px-0 2xl:px-0
 		"
 		>
+			<!-- Title and Profile -->
 			<div class="flex justify-between">
 				<!-- Title -->
 				<Title />
 
-				<div class="mt-2">
+				<!-- Profile -->
+				<div class="pt-2 pr-2">
 					{#if $session.data}
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
@@ -116,12 +170,16 @@
 									<DropdownMenu.Item
 										><ProfileAvatar session={$session} fullInfo={true} /></DropdownMenu.Item
 									>
+
+									<div class="py-1">
+										<Separator />
+									</div>
 									<!-- Logout -->
 									<!-- svelte-ignore a11y-click-events-have-key-events -->
 									<!-- svelte-ignore a11y-no-static-element-interactions -->
 									<DropdownMenu.Item
 										><div
-											class="w-full text-center"
+											class="w-full text-center hover:text-red-500 cursor-pointer"
 											on:click={() => handleLogout($session.data?.session.id)}
 										>
 											Logout
@@ -134,16 +192,16 @@
 				</div>
 			</div>
 
-			<!-- Search -->
-			<Search searchFunction={searchPaper} />
-
 			<!-- Recommended Papers -->
-			<div class="">
+			<div class="pt-10">
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div class="flex justify-between items-center px-4 pb-3">
 					<span class="font-semibold text-lg">
 						{result_title}
 					</span>
-					<div class="rounded-full">
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div class="rounded-full" on:click={() => selectAllPapers()}>
 						<span class="text-xs">{papers.length} {papers.length == 1 ? 'Paper' : 'Papers'} </span>
 					</div>
 				</div>
@@ -163,9 +221,10 @@
 					<!-- Once loading is false, display actual papers -->
 					<div class="flex flex-col gap-y-5">
 						{#each papers as eachPaper}
+							<!-- isSelected={selectedPapers[0] === extractID(eachPaper)} -->
 							<EachPaper
 								paper={eachPaper}
-								isSelected={selectedPapers[0] === extractID(eachPaper)}
+								isSelected={selectedPapers.includes(extractID(eachPaper))}
 								on:click={() => selectPaper(eachPaper)}
 							/>
 						{/each}
@@ -179,7 +238,13 @@
 			</div>
 
 			<!-- Footer -->
-			<Footer />
+			<div class="pt-56 pb-96">
+				<Footer />
+			</div>
 		</div>
 	</div>
+
+	<!-- Search -->
+	<Search searchFunction={chatWithAI} />
+	<!-- <Search searchFunction={searchPaper} /> -->
 </div>

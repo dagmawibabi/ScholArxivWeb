@@ -7,6 +7,7 @@
 		ExternalLink,
 		User,
 		Bookmark,
+		BookmarkCheck,
 		Download,
 		Link2,
 		Sparkles,
@@ -17,7 +18,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 
 	export let paper;
-	export let isSelected;
+	export let isSelected: any;
 
 	// Readable Time
 	const timestamp = paper['published'];
@@ -30,6 +31,7 @@
 	// Click Event
 	import { createEventDispatcher } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { writable } from 'svelte/store';
 	const dispatch = createEventDispatcher();
 
 	// Function to handle download
@@ -79,6 +81,9 @@
 			description: whatToCopy
 		});
 	}
+
+	// Bookmark Paper
+	let isBookmarked = writable(false);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -91,20 +96,23 @@
 	>
 		<div class="px-4">
 			<!-- Date and ID -->
-			<div class="flex gap-x-4 pb-1">
-				<div class="flex items-center text-xs">
-					<CalendarDays size={12} />
-					<span class="pl-1">
-						{readableTime}
-					</span>
-				</div>
+			<div class="flex justify-between items-center pb-1">
+				<div class="flex gap-x-4">
+					<div class="flex items-center text-xs">
+						<CalendarDays size={12} />
+						<span class="pl-1">
+							{readableTime}
+						</span>
+					</div>
 
-				<div class="flex items-center text-xs">
-					<Frame size={12} />
-					<span class="pl-1 pb-[1px]">
-						{extractedId}
-					</span>
+					<div class="flex items-center text-xs">
+						<Frame size={12} />
+						<span class="pl-1 pb-[1px]">
+							{extractedId}
+						</span>
+					</div>
 				</div>
+				<div class={$isBookmarked ? 'w-2 h-2 rounded-full bg-emerald-300' : ''}></div>
 			</div>
 
 			<!-- Title -->
@@ -172,60 +180,90 @@
 					<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Download </span>
 				</div>
 
+				<!-- class={$isBookmarked
+						? 'bg-emerald-300 w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out'
+						: 'w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out'} -->
 				<div
 					class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
+					on:click={(event) => {
+						isBookmarked.update((prev) => !prev);
+						event.stopPropagation();
+					}}
 				>
-					<Bookmark size={15} />
-					<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Bookmark </span>
+					{#if $isBookmarked}
+						<BookmarkCheck size={15} />
+					{:else}
+						<Bookmark size={15} />
+					{/if}
+
+					<span class="hidden md:flex lg:flex xl:flex 2xl:flex">
+						{$isBookmarked ? 'Unbookmark' : 'Bookmark'}
+					</span>
 				</div>
 
-				<!-- <div
-					class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
-					on:click={() => navigator.clipboard.writeText(paper['pdfLink'])}
-				>
-					<Link2 size={15} />
-					<span> Copy </span>
-				</div> -->
-
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger>
-						<div
-							class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
-						>
-							<Link2 size={15} />
-							<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Copy </span>
-						</div>
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content>
-						<DropdownMenu.Group>
-							<DropdownMenu.Item on:click={() => copyToClipboard('All', paper)}
-								>All</DropdownMenu.Item
+				<div on:click={(event) => event.stopPropagation()}>
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							<div
+								class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
 							>
-							<DropdownMenu.Item on:click={() => copyToClipboard('ID', paper)}>ID</DropdownMenu.Item
-							>
-							<DropdownMenu.Item on:click={() => copyToClipboard('Title', paper)}
-								>Title</DropdownMenu.Item
-							>
-							<DropdownMenu.Item on:click={() => copyToClipboard('Authors', paper)}
-								>Authors</DropdownMenu.Item
-							>
-							<DropdownMenu.Item on:click={() => copyToClipboard('PDF Link', paper)}
-								>PDF Link</DropdownMenu.Item
-							>
-							<DropdownMenu.Item on:click={() => copyToClipboard('Summary', paper)}
-								>Summary</DropdownMenu.Item
-							>
-							<DropdownMenu.Item on:click={() => copyToClipboard('Published Date', paper)}
-								>Published Date</DropdownMenu.Item
-							>
-						</DropdownMenu.Group>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
+								<Link2 size={15} />
+								<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Copy </span>
+							</div>
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content>
+							<DropdownMenu.Group>
+								<DropdownMenu.Item
+									on:click={(event) => {
+										event.stopPropagation();
+										copyToClipboard('All', paper);
+									}}>All</DropdownMenu.Item
+								>
+								<DropdownMenu.Item
+									on:click={(event) => {
+										event.stopPropagation();
+										copyToClipboard('ID', paper);
+									}}>ID</DropdownMenu.Item
+								>
+								<DropdownMenu.Item
+									on:click={(event) => {
+										event.stopPropagation();
+										copyToClipboard('Title', paper);
+									}}>Title</DropdownMenu.Item
+								>
+								<DropdownMenu.Item
+									on:click={(event) => {
+										event.stopPropagation();
+										copyToClipboard('Authors', paper);
+									}}>Authors</DropdownMenu.Item
+								>
+								<DropdownMenu.Item
+									on:click={(event) => {
+										event.stopPropagation();
+										copyToClipboard('PDF Link', paper);
+									}}>PDF Link</DropdownMenu.Item
+								>
+								<DropdownMenu.Item
+									on:click={(event) => {
+										event.stopPropagation();
+										copyToClipboard('Summary', paper);
+									}}>Summary</DropdownMenu.Item
+								>
+								<DropdownMenu.Item
+									on:click={(event) => {
+										event.stopPropagation();
+										copyToClipboard('Published Date', paper);
+									}}>Published Date</DropdownMenu.Item
+								>
+							</DropdownMenu.Group>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+				</div>
 			</div>
 		</div>
 
 		<!-- Summary -->
-		<div class="px-3">
+		<div class="px-3" on:click={(event) => event.stopPropagation()}>
 			<div
 				class={isSelected == true
 					? 'pt-3 text-sm transition-all duration-300 ease-in-out'
