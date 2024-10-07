@@ -16,9 +16,15 @@
 		MessageCircle
 	} from 'lucide-svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { selected_papers_store } from '../store/selected_papers_store';
+	import { useSession } from '$lib/auth_client';
 
 	export let paper;
-	export let isSelected: any;
+	// export let isSelected: any;
+	let isSelected = false;
+	selected_papers_store.subscribe((value) => {
+		isSelected = value.includes(extractID(paper));
+	});
 
 	// Readable Time
 	const timestamp = paper['published'];
@@ -32,7 +38,10 @@
 	import { createEventDispatcher } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { writable } from 'svelte/store';
-	const dispatch = createEventDispatcher();
+	import extractID from '../utils/extract_paper_id';
+	import selectPaperFunctions from '../utils/select_paper';
+	import bookmarkPaperFunctions from '../utils/bookmark_papers';
+	import { bookmark_list_store } from '../store/bookmark_list_store';
 
 	// Function to handle download
 	async function handleDownload(paper: any) {
@@ -82,13 +91,41 @@
 		});
 	}
 
+	async function bookmarkPaper(event: any) {
+		event.stopPropagation();
+
+		isBookmarked.update((prev) => !prev);
+		bookmarkPaperFunctions.bookmarkPaper(paperId, $session.data?.user.id);
+	}
+
 	// Bookmark Paper
 	let isBookmarked = writable(false);
+
+	bookmark_list_store.subscribe((value) => {
+		for (const eachBookmark of value) {
+			if (eachBookmark['id'] == paperId) {
+				isBookmarked.set(true);
+			}
+		}
+	});
+
+	// Like Paper
+	async function likePaper(event: any) {
+		$likeCount = $likeCount + 1;
+		// event.stopPropagation();
+	}
+
+	let session = useSession();
+
+	let likeCount = writable(paper['likes']);
+	// likeCount.subscribe((value) => {
+	// 	likeCount = value;
+	// });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="group" on:click={() => dispatch('click')}>
+<div class="group" on:click={() => selectPaperFunctions.selectPaper(paper)}>
 	<div
 		class={isSelected == true
 			? 'relative flex flex-col bg-white overflow-scroll border border-black text-black rounded-xl drop-shadow-xl py-3 cursor-pointer transition-all duration-300 ease-in-out'
@@ -159,10 +196,15 @@
 				</div>
 
 				<div
-					class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
+					class="w-fit flex items-center gap-x-2 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
 				>
 					<Heart size={15} />
-					<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Like </span>
+					<span
+						class="hidden md:flex lg:flex xl:flex 2xl:flex pb-[2px]"
+						on:click={(event) => likePaper(event)}
+					>
+						{$likeCount}
+					</span>
 				</div>
 
 				<div
@@ -186,8 +228,7 @@
 				<div
 					class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
 					on:click={(event) => {
-						isBookmarked.update((prev) => !prev);
-						event.stopPropagation();
+						bookmarkPaper(event);
 					}}
 				>
 					{#if $isBookmarked}

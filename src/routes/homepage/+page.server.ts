@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { baseURL } from '$lib/constants.js';
+import { baseArxivURL } from '$lib/constants.js';
 
 export async function load() {
 	try {
-		const response = await axios.get(baseURL + '/discover');
+		const response = await axios.get(baseArxivURL + '/discover');
 		return {
 			recommendedPapers: response.data
 		};

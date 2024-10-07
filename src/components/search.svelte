@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { Search, Filter } from 'lucide-svelte';
-	import { search_term_store, search_filter_store } from '../store/search_store';
-	import { chat_history_store } from '../store/chat_history_store';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Sparkles } from 'lucide-svelte';
 	import SvelteMarkdown from 'svelte-markdown';
-
-	export let searchFunction: Function;
-	export let chatWithAI: Function;
+	import chatWithAI from '../utils/chat_with_ai';
+	import searchPaper from '../utils/search_paper';
+	import { search_term_store, search_filter_store } from '../store/search_store';
+	import { chat_history_store } from '../store/chat_history_store';
 
 	let inputTerm: string;
 	let search_filter: string;
@@ -28,10 +27,6 @@
 			search_filter_text = search_filter.toLowerCase();
 		}
 	});
-
-	// chat_history_store.subscribe((value) => {
-
-	// })
 </script>
 
 <div class="w-full absolute bottom-0 z-50 pt-2">
@@ -70,7 +65,7 @@
 							{/if} -->
 							<span class="group-hover/text:text-black">
 								{#if chat['from'] == 'system'}
-									<div class="animate-pulse">Thinking....</div>
+									<div class="animate-pulse">{chat['content']}</div>
 								{:else}
 									<SvelteMarkdown source={chat['content']} />
 								{/if}
@@ -129,7 +124,7 @@
 				>
 					<div
 						class="px-6 py-2 border-l cursor-pointer group-hover/search:bg-black group-hover:text-white"
-						on:click={() => searchFunction()}
+						on:click={() => searchPaper()}
 					>
 						<span> Search </span>
 					</div>
