@@ -2,12 +2,14 @@ import { baseBookmarkURL } from '$lib/constants';
 import axios from 'axios';
 import { bookmark_list_store } from '../store/bookmark_list_store';
 import selectPaperFunctions from '../utils/select_paper';
+import { bookmark_loading_store } from '../store/loading_store';
 
 async function getBookmarks() {
 	const response = await axios.get(baseBookmarkURL + '/myBookmarks', {
 		withCredentials: true
 	});
 	bookmark_list_store.set(response.data);
+	bookmark_loading_store.set(false);
 	selectPaperFunctions.selectFirstPaper();
 }
 

@@ -10,18 +10,21 @@
 	import { writable } from 'svelte/store';
 	import Navigation from '../../components/navigation.svelte';
 	import selectPaperFunctions from '../../utils/select_paper';
+	import discoverPapers from '../../utils/discover_papers';
+	import { discovery_loading_store } from '../../store/loading_store';
 
 	let papers: any[] = [];
 	let result_title: string = '';
-	let loading = true;
 
-	export let data;
-	onMount(() => {
-		loading = false;
-		// papers = data.recommendedPapers;
-		paper_list_store.set(data.recommendedPapers);
-		selectPaperFunctions.selectFirstPaper();
-	});
+	discoverPapers();
+
+	// export let data;
+	// onMount(() => {
+	// 	loading = false;
+	// 	// papers = data.recommendedPapers;
+	// 	paper_list_store.set(data.recommendedPapers);
+	// 	selectPaperFunctions.selectFirstPaper();
+	// });
 
 	// State Management
 	paper_list_store.subscribe((value: any[]) => {
@@ -64,7 +67,7 @@
 						<span class="text-xs">{papers.length} {papers.length == 1 ? 'Paper' : 'Papers'} </span>
 					</div>
 				</div>
-				{#if loading}
+				{#if $discovery_loading_store}
 					<!-- Display Skeletons if loading -->
 					<div class="flex flex-col gap-y-5">
 						<SkeletonPaperWithSummary />
@@ -73,7 +76,7 @@
 						<SkeletonPaper />
 						<SkeletonPaper />
 					</div>
-				{:else if papers.length <= 0 && loading == false}
+				{:else if papers.length <= 0 && $discovery_loading_store == false}
 					<!-- Empty state, if no papers are found after loading -->
 					<div>No papers found.</div>
 				{:else}

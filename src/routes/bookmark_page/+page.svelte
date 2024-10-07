@@ -4,6 +4,9 @@
 	import { bookmark_list_store } from '../../store/bookmark_list_store';
 	import EachPaper from '../../components/each_paper.svelte';
 	import bookmark_functions from '../../utils/bookmark_papers';
+	import { bookmark_loading_store } from '../../store/loading_store';
+	import SkeletonPaperWithSummary from '../../components/skeleton_paper_with_summary.svelte';
+	import SkeletonPaper from '../../components/skeleton_paper.svelte';
 
 	let bookmarkedPapers: any[] = [];
 	bookmark_functions.getBookmarks();
@@ -25,7 +28,16 @@
 			<Navigation />
 			<div class="pt-10">
 				<div class="flex flex-col gap-y-5">
-					{#if bookmarkedPapers.length <= 0}
+					{#if $bookmark_loading_store}
+						<!-- Display Skeletons if loading -->
+						<div class="flex flex-col gap-y-5">
+							<SkeletonPaperWithSummary />
+							<SkeletonPaper />
+							<SkeletonPaper />
+							<SkeletonPaper />
+							<SkeletonPaper />
+						</div>
+					{:else if bookmarkedPapers.length <= 0 && $bookmark_loading_store == false}
 						<!-- Empty state, if no papers are found after loading -->
 						<div>No papers found.</div>
 					{:else}

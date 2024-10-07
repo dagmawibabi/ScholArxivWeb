@@ -68,6 +68,6 @@ export const handleResetPassword = async (password: string) => {
 };
 
 export const handleLogout = async (id: string | undefined) => {
-	await authClient.user.revokeSession({ id: id! });
+	authClient.user.revokeSession({ id: id! });
 	goto('/');
 };

@@ -6,6 +6,7 @@ export const aiBaseURL = 'http://localhost:6400/gemini';
 
 export const baseArxivURL = 'http://localhost:6400/arxiv';
 export const baseBookmarkURL = 'http://localhost:6400/bookmark';
+export const baseLikeURL = 'http://localhost:6400/like';
 
 // export const baseURL = 'https://scholarxivapi.onrender.com/arxiv';
 // export const authBaseURL = 'https://scholarxivapi.onrender.com';

@@ -42,6 +42,7 @@
 	import selectPaperFunctions from '../utils/select_paper';
 	import bookmarkPaperFunctions from '../utils/bookmark_papers';
 	import { bookmark_list_store } from '../store/bookmark_list_store';
+	import likePaper from '../utils/like_papers';
 
 	// Function to handle download
 	async function handleDownload(paper: any) {
@@ -98,7 +99,7 @@
 	}
 
 	// Bookmark Paper
-	let isBookmarked = writable(false);
+	let isBookmarked = writable(paper['isBookmarked']);
 
 	bookmark_list_store.subscribe((value) => {
 		for (const eachBookmark of value) {
@@ -109,14 +110,20 @@
 	});
 
 	// Like Paper
-	async function likePaper(event: any) {
-		$likeCount = $likeCount + 1;
-		// event.stopPropagation();
+	async function asyncLikePaper(event: any) {
+		if ($isLiked == true) {
+			$likeCount = $likeCount - 1;
+		} else {
+			$likeCount = $likeCount + 1;
+		}
+		$isLiked = !$isLiked;
+		likePaper(paperId);
+		console.log('like');
+		event.stopPropagation();
 	}
 
-	let session = useSession();
-
 	let likeCount = writable(paper['likes']);
+	let isLiked = writable(paper['isLiked']);
 	// likeCount.subscribe((value) => {
 	// 	likeCount = value;
 	// });
@@ -187,21 +194,23 @@
 			justify-between md:justify-start lg:justify-start xl:justify-start 2xl:justify-start
 			"
 			>
-				<div
+				<!-- <div
 					class="w-fit flex items-center gap-x-1 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
 				>
 					<Sparkles size={15} />
 					<span class="hidden md:flex lg:flex xl:flex 2xl:flex"> Ask AI </span>
-				</div>
+				</div> -->
 
 				<div
-					class="w-fit flex items-center gap-x-2 px-2 py-1 border border-transparent rounded-xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
+					class="w-fit flex items-center gap-x-2 px-2 py-1 border border-transparent rounded-2xl hover:border-zinc-800 hover:text-black transition-all duration-200 ease-in-out"
+					on:click={(event) => asyncLikePaper(event)}
 				>
-					<Heart size={15} />
-					<span
-						class="hidden md:flex lg:flex xl:flex 2xl:flex pb-[2px]"
-						on:click={(event) => likePaper(event)}
-					>
+					<Heart
+						size={15}
+						fill={$isLiked == true ? 'red' : 'white'}
+						class={$isLiked == true ? 'text-red-500' : ''}
+					/>
+					<span class="hidden md:flex lg:flex xl:flex 2xl:flex pb-[2px]">
 						{$likeCount}
 					</span>
 				</div>
@@ -230,11 +239,11 @@
 						bookmarkPaper(event);
 					}}
 				>
-					{#if $isBookmarked}
-						<BookmarkCheck size={15} />
-					{:else}
-						<Bookmark size={15} />
-					{/if}
+					<Bookmark
+						size={15}
+						fill={$isBookmarked == true ? 'lightGreen' : 'white'}
+						class={$isBookmarked == true ? 'text-emerald-500' : ''}
+					/>
 
 					<span class="hidden md:flex lg:flex xl:flex 2xl:flex">
 						{$isBookmarked ? 'Unbookmark' : 'Bookmark'}

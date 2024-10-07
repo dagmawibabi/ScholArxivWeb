@@ -31,10 +31,10 @@
 
 <div class="w-full absolute bottom-0 right-0 left-0 z-50 pt-2">
 	<div
-		class="group w-full md:w-2/5 lg:w-2/5 xl:w-2/5 2xl:w-2/5 mx-auto backdrop-blur-sm hover:bg-white/50 hover:backdrop-blur-xl border-t border-dashed pt-3 border-transparent hover:border-zinc-400 rounded-tl-2xl rounded-tr-2xl"
+		class="group w-full md:w-2/5 lg:w-2/5 xl:w-2/5 2xl:w-2/5 mx-auto backdrop-blur-sm hover:bg-white/50 hover:backdrop-blur-xl border-t border-dashed hover:pt-3 border-transparent hover:border-zinc-400 rounded-tl-3xl rounded-tr-3xl"
 	>
 		<div
-			class="h-2 group-hover:h-[550px] opacity-0 group-hover:opacity-100 overflow-scroll duration-300"
+			class="h-0 group-hover:h-[550px] opacity-0 group-hover:opacity-100 overflow-scroll duration-300"
 		>
 			{#each $chat_history_store as chat}
 				<div class={chat['from'] == 'user' ? 'flex justify-end pr-8' : 'flex justify-start pl-4'}>
@@ -75,8 +75,8 @@
 				</div>
 			{/each}
 		</div>
-		<div class="pt-3 pb-5">
-			<div class="group flex items-center border border-zinc-400 rounded-2xl bg-white">
+		<div class="pt-0 pb-5 px-2">
+			<div class="group flex items-center border border-zinc-400 rounded-3xl bg-white">
 				<div class="flex w-full items-center px-3 py-2 gap-x-2">
 					<Search size={18} class="text-zinc-400" />
 					<input
