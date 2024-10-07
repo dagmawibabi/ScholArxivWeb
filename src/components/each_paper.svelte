@@ -92,10 +92,9 @@
 	}
 
 	async function bookmarkPaper(event: any) {
-		event.stopPropagation();
-
+		// event.stopPropagation();
 		isBookmarked.update((prev) => !prev);
-		bookmarkPaperFunctions.bookmarkPaper(paperId, $session.data?.user.id);
+		bookmarkPaperFunctions.bookmarkPaper(paperId);
 	}
 
 	// Bookmark Paper

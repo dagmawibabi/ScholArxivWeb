@@ -1,21 +1,16 @@
 <script lang="ts">
 	import Navigation from '../../components/navigation.svelte';
 	import Search from '../../components/search.svelte';
-	import { onMount } from 'svelte';
 	import { bookmark_list_store } from '../../store/bookmark_list_store';
 	import EachPaper from '../../components/each_paper.svelte';
-	import { useSession } from '$lib/auth_client';
 	import bookmark_functions from '../../utils/bookmark_papers';
 
-	let session = useSession();
-
 	let bookmarkedPapers: any[] = [];
-	bookmark_functions.getBookmarks($session.data?.user.id);
+	bookmark_functions.getBookmarks();
 
 	// State Management
 	bookmark_list_store.subscribe((value: any[]) => {
 		bookmarkedPapers = value;
-		console.log(bookmarkedPapers);
 	});
 </script>
 
